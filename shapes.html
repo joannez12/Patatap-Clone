@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>shapes</title>
+	<script type="text/javascript" src="paper-full.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.14/howler.js"></script>
+	<link rel="stylesheet" type="text/css" href="shapes.css">
+	<script type="text/paperscript" canvas="myCanvas">
+
+	// data associated with each key (music and colour)
+	var keyData = {
+	q: {
+		sound: new Howl({
+  		src: ['sounds/bubbles.mp3']
+		}),
+		color: '#EEADE3'
+	},
+	w: {
+		sound: new Howl({
+  		src: ['sounds/clay.mp3']
+		}),
+		color: '#A8DFF3'
+	},
+	e: {
+		sound: new Howl({
+  		src: ['sounds/confetti.mp3']
+		}),
+		color: '#3498DB'
+	},
+	r: {
+		sound: new Howl({
+  		src: ['sounds/corona.mp3']
+		}),
+		color: '#F3A8C0'
+	},
+		t: {
+		sound: new Howl({
+  		src: ['sounds/dotted-spiral.mp3']
+		}),
+		color: '#480A54'
+	},
+	y: {
+		sound: new Howl({
+  		src: ['sounds/flash-1.mp3']
+		}),
+		color: '#32C5C0'
+	},
+	u: {
+		sound: new Howl({
+  		src: ['sounds/flash-2.mp3']
+		}),
+		color: '#EAAF98'
+	},
+	i: {
+		sound: new Howl({
+  		src: ['sounds/flash-3.mp3']
+		}),
+		color: '#C00E8F'
+	},
+	o: {
+		sound: new Howl({
+			src: ['sounds/glimmer.mp3']
+		}),
+		color: '#854CBC'
+	},
+	p: {
+		sound: new Howl({
+  		src: ['sounds/moon.mp3']
+		}),
+		color: '#94B3DA'
+	},
+	a: {
+		sound: new Howl({
+  		src: ['sounds/pinwheel.mp3']
+		}),
+		color: '#E6EEA2'
+	},
+	s: {
+		sound: new Howl({
+  		src: ['sounds/piston-1.mp3']
+		}),
+		color: '#DC6959'
+	},
+		d: {
+		sound: new Howl({
+  		src: ['sounds/piston-2.mp3']
+		}),
+		color: '#22DCCA'
+	},
+	f: {
+		sound: new Howl({
+  		src: ['sounds/prism-1.mp3']
+		}),
+		color: '#F09D4A'
+	},
+	g: {
+		sound: new Howl({
+  		src: ['sounds/prism-2.mp3']
+		}),
+		color: '#F2E88A'
+	},
+	h: {
+		sound: new Howl({
+  		src: ['sounds/prism-3.mp3']
+		}),
+		color: '#8AF2B9'
+	},
+	j: {
+		sound: new Howl({
+  		src: ['sounds/splits.mp3']
+		}),
+		color: '#E84458'
+	},
+	k: {
+		sound: new Howl({
+  		src: ['sounds/squiggle.mp3']
+		}),
+		color: '#E0D3D4'
+	},
+	l: {
+		sound: new Howl({
+  		src: ['sounds/strike.mp3']
+		}),
+		color: '#DFE0D3'
+	},
+	z: {
+		sound: new Howl({
+  		src: ['sounds/suspension.mp3']
+		}),
+		color: '#8E84D8'
+	},
+	x: {
+		sound: new Howl({
+  		src: ['sounds/timer.mp3']
+		}),
+		color: '#CD19C2'
+	},
+	c: {
+		sound: new Howl({
+  		src: ['sounds/ufo.mp3']
+		}),
+		color: '#0DE1CC'
+	},
+	v: {
+		sound: new Howl({
+  		src: ['sounds/veil.mp3']
+		}),
+		color: '#BD13CA'
+	},
+	b: {
+		sound: new Howl({
+  		src: ['sounds/wipe.mp3']
+		}),
+		color: '#57B61F'
+	},
+	n: {
+		sound: new Howl({
+			src: ['sounds/zig-zag.mp3']
+		}),
+		color: '#7E6482'
+	},
+	m: {
+		sound: new Howl({
+  		src: ['sounds/moon.mp3']
+		}),
+		color: '#B0E392'
+	}
+}
+	
+	var shapes = []; // list to store each newly created shape
+
+	// when key is pressed, function will create a random new shape at a random coordinate(point) which is added to shapes list with the keys data(music and colour)
+	function onKeyDown(event) {
+		if(keyData[event.key]){
+
+			var maxPoint = new Point(view.size.width, view.size.height);
+			var randomPoint = Point.random();
+			var point = maxPoint * randomPoint;
+			
+			// Chooses a random number from 1 - 4: 1 = circle, 2 = rectangle, 3 = polygon, 4 = star
+			var shapeChooser = Math.floor((Math.random()*4) + 1);
+			if (shapeChooser === 1) {
+				var newShape = new Path.Circle(point, Math.floor((Math.random() * 1000) + 1))
+			} else if (shapeChooser === 2) {
+				var newShape = new Path.Rectangle(point, new Size((Math.random() * 500) + 1, (Math.random() * 500) + 1))
+			} else if (shapeChooser === 3) {
+				var newShape = new Path.RegularPolygon(point, Math.floor(Math.random()*8) + 3, 300)
+			} else {
+				var newShape = new Path.Star(point, 5, (Math.random()*500)+200, (Math.random()*300)+150)
+			}
+			newShape.fillColor = keyData[event.key].color
+			keyData[event.key].sound.play();	
+			shapes.push(newShape);
+		}	
+	}
+
+	// handler function to display the shapes on screen on each frame
+	function onFrame(event){
+  		for(var i = 0; i < shapes.length; i++){
+  			shapes[i].rotate(2)
+    		shapes[i].scale(0.9);
+    		shapes[i].fillColor.hue += 1; // hue = colour, changes the shade of the colour
+    		if(shapes[i].area < 1){
+      			shapes[i].remove(); // remove the shape from the canvas
+      			shapes.splice(i, 1); // remove the shape from the array
+      			i--; // decrement i so that the loop doesn't skip a shape because of .splice()
+      			console.log(shapes);
+    		}
+  		}
+	}
+
+
+	</script>
+</head>
+<body>
+	<canvas id="myCanvas" resize></canvas>
+
+</body>
+</html>
